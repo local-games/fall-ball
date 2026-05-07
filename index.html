@@ -3,6 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="マイゲーム">
+    <link rel="manifest" href="manifest.json">
     <title>KIRBY DOWN! Solid Control Edition</title>
     <style>
         body {
@@ -139,7 +144,15 @@
     </style>
 </head>
 <body>
-
+    <div id="fallback-screen" style="display:none; position:fixed; inset:0; z-index:9999; background:#fff9e6; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; font-family:sans-serif;">
+      <img src="icon.png" style="width:120px; border-radius:20%; margin-bottom:20px; box-shadow:0 10px 20px rgba(0,0,0,0.1);">
+      <h2 style="color:#ff6b6b;">戻るボタンが押されたよ</h2>
+      <p style="color:#888; margin-bottom:30px;">下のボタンを押してゲームに戻ろう</p>
+      <button onclick="document.getElementById('fallback-screen').style.display='none'; initLevel(0);" 
+        style="background:#6bcb77; color:#fff; border:none; border-radius:50px; padding:15px 40px; font-size:1.2rem; font-weight:bold; cursor:pointer; box-shadow:0 5px 0 #2d7a35;">
+  ゲームに戻る
+    </button>
+    </div>
     <div class="ui">階層: <span id="depth">0</span> m</div>
     <canvas id="gameCanvas" width="400" height="500"></canvas>
 
@@ -525,6 +538,20 @@
         }
 
         update();
+    </script>
+    <script>
+  // 履歴を積んでおく
+  history.pushState({page: "play"}, null, "");
+
+  window.addEventListener('popstate', function(event) {
+    // 予備画面をパッと出す
+    const fallback = document.getElementById('fallback-screen');
+    if(fallback) {
+        fallback.style.display = 'flex';
+    }
+    // 次に備えてまた履歴を積む
+    history.pushState({page: "play"}, null, "");
+  });
     </script>
 </body>
 </html>
